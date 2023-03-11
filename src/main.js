@@ -5,5 +5,9 @@ import './assets/main.css'
 
 import router from "./router/index"
 
-createApp(App).use(router).mount('#app')
+import store from "./store/index"
+import mstore from "./router/mrouterTest"
+
+const app = createApp(App)
+app.use(store).use(mstore).use(router).mount('#app')
 

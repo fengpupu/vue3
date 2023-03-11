@@ -1,11 +1,11 @@
 <template>
     <div>
         <div>
-            <input v-model="templateItem" @keydown.enter="add"/>
-            <button v-if="all-active>0" @click="clearDone">清楚</button>
+            <input v-model="templateItem" @keydown.enter="add" />
+            <button v-if="all - active > 0" @click="clearDone">清楚</button>
         </div>
         <ul>
-            <li v-for="(item,index) in list" :key="index">
+            <li v-for="(item, index) in list" :key="index">
                 <input type="checkbox" v-model="item.checked">
                 {{ item.label }}
             </li>
@@ -16,34 +16,43 @@
 </template>
 
 <script setup>
-import {ref,computed} from "vue"
-let list = ref([])
+import { ref, computed, watchEffect, watch ,reactive} from "vue"
+let list = reactive(JSON.parse(localStorage.getItem('todos')) || [])
 let templateItem = ref('')
-let active = computed(()=>{
-    console.log('change active')
-    return list.value.filter((item)=>{
-       return !item.checked
+let template = null
+let active = computed(() => {
+    return list.filter((item) => {
+        return !item.checked
     }).length
 })
-let all = computed(()=>{
-    return list.value.length
+let all = computed(() => {
+    return list.length
 })
-function add(){
-    list.value.push({label:templateItem.value,checked:false})
+watchEffect(()=>{
+    // console.log('change',list.length)
+    // localStorage.setItem('todos',JSON.stringify(list))
+    template = list
+    console.log('template',template)
+})
+// watch(list, () => {
+//     console.log('change', list)
+// })
+function add() {
+    list.push({ label: templateItem.value, checked: false })
     templateItem.value = ''
 }
-function allDone(){
+function allDone() {
     let flag = true
-    list.value.forEach(item=>{
-        flag = flag&&item.checked
+    list.forEach(item => {
+        flag = flag && item.checked
     })
     flag = !flag
-    list.value.forEach(item=>{
+    list.forEach(item => {
         item.checked = flag
     })
 }
-function clearDone(){
-    list.value =  list.value.filter(item=>!item.checked)
+function clearDone() {
+    list = list.filter(item => !item.checked)
 }
 </script>
 
